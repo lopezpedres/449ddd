@@ -109,13 +109,16 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
 
-      conversations.forEach((convo) => {
+      const updatedConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-        }
-      });
-      setConversations(conversations);
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text
+          }
+        } else { return convo }
+      }
+      );
+      setConversations(updatedConversations);
     },
     [setConversations, conversations],
   );
