@@ -189,6 +189,8 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get("/api/conversations");
+        const [{ messages }] = data
+        messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
       } catch (error) {
         console.error(error);
