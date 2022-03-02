@@ -62,9 +62,9 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage = async (body) => {
     try {
-      const data = saveMessage(body);
+      const data = await saveMessage(body);
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
@@ -80,14 +80,17 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
+      const updatedConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
-        }
-      });
-      setConversations(conversations);
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text,
+            id: message.conversationId
+          }
+        } else { return convo }
+      }
+      );
+      setConversations(updatedConversations);
     },
     [setConversations, conversations],
   );
@@ -106,13 +109,16 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
 
-      conversations.forEach((convo) => {
+      const updatedConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-        }
-      });
-      setConversations(conversations);
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text
+          }
+        } else { return convo }
+      }
+      );
+      setConversations(updatedConversations);
     },
     [setConversations, conversations],
   );
@@ -183,6 +189,8 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get("/api/conversations");
+        const [{ messages }] = data
+        messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
       } catch (error) {
         console.error(error);
