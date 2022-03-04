@@ -62,22 +62,45 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const updateMessage = (data, body) => {
+    socket.emit("update-message", {
+      message: data.message,
+      recipientId: body.recipientId,
+      sender: data.sender,
+    });}
+
+  // const putMessage = async(body)=>{
+
+  //   if(body.messageId){
+  //     updateMessageInConversation(data)
+
+  //   }
+
+  // }
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
-      } else {
+        sendMessage(data, body)
+      } 
+      if(body.messageId){
+        updateMessageInConversation(data,body)
+        updateMessage(data,body)
+
+
+      }else {
         addMessageToConversation(data);
+        sendMessage(data, body)
       }
 
-      sendMessage(data, body);
+      // sendMessage(data, body);
     } catch (error) {
       console.error(error);
     }
   };
-
   const addNewConvo = useCallback(
     (recipientId, message) => {
       const updatedConversations = conversations.map((convo) => {
@@ -88,6 +111,26 @@ const Home = ({ user, logout }) => {
             id: message.conversationId
           }
         } else { return convo }
+      }
+      );
+      setConversations(updatedConversations);
+    },
+    [setConversations, conversations],
+  );
+
+  const updateMessageInConversation = useCallback(
+    (data,body) => {
+      const { message } = data;
+      const updatedConversations = conversations.map((convo) => {
+        if (convo.id === message.conversationId) {
+          convo.messages.splice(-1)
+          console.log(convo.messages)
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text
+          }
+        } else {
+          return convo }
       }
       );
       setConversations(updatedConversations);
@@ -162,6 +205,8 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("update-message", updateMessageInConversation);
+    
 
     return () => {
       // before the component is destroyed
@@ -169,8 +214,9 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("update-message", updateMessageInConversation)
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser,updateMessageInConversation, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect

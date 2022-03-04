@@ -15,12 +15,40 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ otherUser, conversationId, user, postMessage }) => {
+const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
+  
+   const LatestMessage = messages[messages.length - 1]
+  // console.log("LatestMessage when rendering", latestMessage)
+  const handleInputFocus= async()=>{
+
+    //Only the recipient can update the messsage
+try {
+  if (LatestMessage.senderId!==user.id && LatestMessage.readStatus===false){
+      
+    
+    const reqBody = {
+      text: LatestMessage.text,
+      readStatus: true,
+      conversationId,
+      messageId:LatestMessage.id,
+      recipientId: otherUser.id,
+      sender: conversationId ? null : user,
+    };
+
+    await postMessage(reqBody);
+    console.log("Input selected", LatestMessage)
+  
+  }}catch (error) {
+      console.error(error);
+  }
+    
+  }
 
   const handleChange = (event) => {
     setText(event.target.value);
+
   };
 
   const handleSubmit = async (event) => {
@@ -36,6 +64,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
     };
     await postMessage(reqBody);
     setText('');
+    setShowAvatar(false)
   };
 
   return (
@@ -48,6 +77,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
           value={text}
           name="text"
           onChange={handleChange}
+          onFocusCapture={handleInputFocus}
         />
       </FormControl>
     </form>
