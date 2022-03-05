@@ -5,7 +5,7 @@ import moment from 'moment';
 
 const Messages = (props) => {
   const {setShowAvatar, showAvatar,messages, otherUser, userId } = props;
-  const LatestMessage = messages[messages.length - 1]
+  const latestMessage = messages[messages.length - 1]
 
   return (
     <Box>
@@ -20,8 +20,7 @@ const Messages = (props) => {
           setShowAvatar={setShowAvatar}
           text={message.text} 
           time={time} 
-          readStatus={message.readStatus} 
-          LatestMessage={LatestMessage}
+          latestMessage={latestMessage}
           otherUser={otherUser}/>
         ) : (
           <OtherUserBubble
