@@ -21,9 +21,17 @@ class Messages(APIView):
             text = body.get("text")
             recipient_id = body.get("recipientId")
             sender = body.get("sender")
+            message_id=body.get("messageId")
 
             # if we already know conversation id, we can save time and just add it to message and return
             if conversation_id:
+                # Updating readStatus of the message
+                message= Message.objects.filter(id=message_id).first()
+                if message:
+                    message.readStatus=True
+                    message.save()
+                    message_json = message.to_dict()
+                    return JsonResponse({"message": message_json, "sender": body["sender"]})
                 conversation = Conversation.objects.filter(id=conversation_id).first()
                 message = Message(
                     senderId=sender_id, text=text, conversation=conversation
