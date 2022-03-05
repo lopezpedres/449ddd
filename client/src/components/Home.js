@@ -75,7 +75,14 @@ const Home = ({ user, logout }) => {
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
-      } else {
+        sendMessage(data, body)
+      } 
+      if(body.messageId){
+        updateMessageInConversation(data,body)
+        updateMessage(data,body)
+
+
+      }else {
         addMessageToConversation(data);
       }
 
