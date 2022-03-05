@@ -110,6 +110,26 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
+  const updateMessageInConversation = useCallback(
+    (data) => {
+      const { message } = data;
+      const updatedConversations = conversations.map((convo) => {
+        if (convo.id === message.conversationId) {
+          convo.messages.splice(-1)
+          console.log(convo.messages)
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text
+          }
+        } else {
+          return convo }
+      }
+      );
+      setConversations(updatedConversations);
+    },
+    [setConversations, conversations],
+  );
+
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
