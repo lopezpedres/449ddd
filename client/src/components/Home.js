@@ -88,22 +88,12 @@ const Home = ({ user, logout }) => {
       const data = await saveMessage(body);
 
       if (!body.conversationId) {
-        console.log('Before adding',body)
         addNewConvo(body.recipientId, data.message);
-        sendMessage(data, body)
-      } 
-      if(body.messageId){
-        updateMessageInConversation(data,body)
-        updateMessage(data,body)
-
-
       }else {
         addMessageToConversation(data);
         
       }
-      console.log('sending Socker Message')
       sendMessage(data, body)
-      console.log(' Socker Message Sent')
     } catch (error) {
       console.error(error);
     }
@@ -150,7 +140,6 @@ const Home = ({ user, logout }) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender=null } = data;
       if (sender !== null) {
-        console.log("Sender is not null")
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
@@ -160,9 +149,9 @@ const Home = ({ user, logout }) => {
         setConversations([newConvo])
       }
       console.log(conversations)
-      //I HAVE TO PUT THIS IN A IF SO IT DOES NOT JUMP AFTER THE FIRST ONE
-   
-      if(sender === null){const updatedConversations = conversations.map((convo) => {
+      
+      if(sender === null)
+      {const updatedConversations = conversations.map((convo) => {
       if (convo.id === message.conversationId) {
           return {
             ...convo, messages: [...convo.messages, message],
