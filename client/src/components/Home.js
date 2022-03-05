@@ -102,7 +102,6 @@ const Home = ({ user, logout }) => {
     (recipientId, message) => {
       const updatedConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
-          console.log("Adding Convo")
           return {
             ...convo, messages: [message],
             latestMessageText: message.text,
@@ -148,7 +147,6 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations([newConvo])
       }
-      console.log(conversations)
       
       if(sender === null)
       {const updatedConversations = conversations.map((convo) => {
