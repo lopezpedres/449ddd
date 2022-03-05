@@ -58,6 +58,7 @@ const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMes
     };
     await postMessage(reqBody);
     setText('');
+    setShowAvatar(false)
   };
 
   return (
