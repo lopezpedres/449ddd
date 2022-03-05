@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage }) => {
+const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage, putMessage }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
   
@@ -37,11 +37,11 @@ try {
       sender: conversationId ? null : user,
     };
 
-    await postMessage(reqBody);
-    console.log("Input selected", LatestMessage)
+    await putMessage(reqBody);
   
   }}catch (error) {
-      console.error(error);
+      console.error("This is handleInputFocus",error);
+
   }
     
   }

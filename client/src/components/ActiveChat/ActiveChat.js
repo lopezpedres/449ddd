@@ -24,6 +24,7 @@ const ActiveChat = ({
   conversations,
   activeConversation,
   postMessage,
+  putMessage
 }) => {
   const classes = useStyles();
 
@@ -63,6 +64,7 @@ const ActiveChat = ({
                   conversationId={conversation.id || null}
                   user={user}
                   postMessage={postMessage}
+                  putMessage={putMessage}
                   setShowAvatar={setShowAvatar}
                 />
               </>

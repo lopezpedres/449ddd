@@ -69,34 +69,34 @@ const Home = ({ user, logout }) => {
       sender: data.sender,
     });}
 
-  // const putMessage = async(body)=>{
+  const putMessage = async(body)=>{
+    try{
+      const data = await saveMessage(body);
+      if(body.messageId){
+        updateMessageInConversation(data)
+      }
+      updateMessage(data,body)
+    }catch (error) {
+      console.error(error);
+    }
 
-  //   if(body.messageId){
-  //     updateMessageInConversation(data)
 
-  //   }
-
-  // }
+  }
 
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
 
       if (!body.conversationId) {
+        console.log('Before adding',body)
         addNewConvo(body.recipientId, data.message);
-        sendMessage(data, body)
-      } 
-      if(body.messageId){
-        updateMessageInConversation(data,body)
-        updateMessage(data,body)
-
-
-      }else {
+      } else {
         addMessageToConversation(data);
-        sendMessage(data, body)
+        
       }
-
-      // sendMessage(data, body);
+      console.log('sending Socker Message')
+      sendMessage(data, body)
+      console.log(' Socker Message Sent')
     } catch (error) {
       console.error(error);
     }
@@ -105,6 +105,7 @@ const Home = ({ user, logout }) => {
     (recipientId, message) => {
       const updatedConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
+          console.log("Adding Convo")
           return {
             ...convo, messages: [...convo.messages, message],
             latestMessageText: message.text,
@@ -119,12 +120,11 @@ const Home = ({ user, logout }) => {
   );
 
   const updateMessageInConversation = useCallback(
-    (data,body) => {
+    (data) => {
       const { message } = data;
       const updatedConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
           convo.messages.splice(-1)
-          console.log(convo.messages)
           return {
             ...convo, messages: [...convo.messages, message],
             latestMessageText: message.text
@@ -141,8 +141,9 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
+      const { message, sender=null } = data;
       if (sender !== null) {
+        console.log("Sender is not null")
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
@@ -151,8 +152,8 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
-
-      const updatedConversations = conversations.map((convo) => {
+      //I HAVE TO PUT THIS IN A IF SO IT DOES NOT JUMP AFTER THE FIRST ONE
+        const updatedConversations = conversations.map((convo) => {
         if (convo.id === message.conversationId) {
           return {
             ...convo, messages: [...convo.messages, message],
@@ -270,6 +271,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          putMessage={putMessage}
         />
       </Grid>
     </>
