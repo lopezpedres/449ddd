@@ -62,6 +62,13 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const updateMessage = (data, body) => {
+    socket.emit("update-message", {
+      message: data.message,
+      recipientId: body.recipientId,
+      sender: data.sender,
+    });}
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
