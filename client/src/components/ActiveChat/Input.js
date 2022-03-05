@@ -15,35 +15,34 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage, putMessage }) => {
+const Input = ({ setShowAvatar, messages, otherUser, conversationId, user, postMessage, putMessage }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
-  
-   const LatestMessage = messages[messages.length - 1]
-  // console.log("LatestMessage when rendering", latestMessage)
-  const handleInputFocus= async()=>{
+
+  const latestMessage = messages[messages.length - 1]
+  const handleInputFocus = async () => {
 
     //Only the recipient can update the messsage
-try {
-  if (LatestMessage.senderId!==user.id && LatestMessage.readStatus===false){
-      
-    
-    const reqBody = {
-      text: LatestMessage.text,
-      readStatus: true,
-      conversationId,
-      messageId:LatestMessage.id,
-      recipientId: otherUser.id,
-      sender: conversationId ? null : user,
-    };
+    try {
+      if (latestMessage.senderId !== user.id && latestMessage.readStatus === false) {
 
-    await putMessage(reqBody);
-  
-  }}catch (error) {
-      console.error("This is handleInputFocus",error);
 
-  }
-    
+        const reqBody = {
+          text: latestMessage.text,
+          conversationId,
+          messageId: latestMessage.id,
+          recipientId: otherUser.id,
+          sender: conversationId ? null : user,
+        };
+
+        await putMessage(reqBody);
+
+      }
+    } catch (error) {
+      console.error(error);
+
+    }
+
   }
 
   const handleChange = (event) => {
