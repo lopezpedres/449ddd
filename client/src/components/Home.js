@@ -197,6 +197,8 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("update-message", updateMessageInConversation);
+    
 
     return () => {
       // before the component is destroyed
