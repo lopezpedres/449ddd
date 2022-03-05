@@ -35,6 +35,14 @@ const useStyles = makeStyles(() => ({
 
 const SenderBubble = ({LatestMessage,setShowAvatar, showAvatar,time, text, readStatus, otherUser, messageId }) => {
   const classes = useStyles();
+  useEffect(() => {
+    if (LatestMessage.readStatus && messageId === LatestMessage.id)
+      setShowAvatar(true)
+      
+    }
+  , [setShowAvatar,messageId,LatestMessage.readStatus,LatestMessage.id])
+  
+
 
   return (
     <Box className={classes.root}>
