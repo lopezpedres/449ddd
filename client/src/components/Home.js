@@ -206,6 +206,7 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("update-message", updateMessageInConversation)
     };
   }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
 
