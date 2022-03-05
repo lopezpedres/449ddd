@@ -33,20 +33,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SenderBubble = ({LatestMessage,setShowAvatar, showAvatar,time, text, readStatus, otherUser, messageId }) => {
+const SenderBubble = ({latestMessage,setShowAvatar, showAvatar,time, text, otherUser, messageId }) => {
   const classes = useStyles();
   
   
 
   useEffect(() => {
-    if (LatestMessage.readStatus && messageId === LatestMessage.id)
+    if (latestMessage.readStatus && messageId === latestMessage.id)
       setShowAvatar(true)
       
     }
     
   
     
-  , [setShowAvatar,showAvatar,messageId,LatestMessage.readStatus,LatestMessage.id])
+  , [setShowAvatar,showAvatar,messageId,latestMessage.readStatus,latestMessage.id])
   
 
 
@@ -56,7 +56,7 @@ const SenderBubble = ({LatestMessage,setShowAvatar, showAvatar,time, text, readS
       <Box className={ classes.bubble }>
         <Typography className={ classes.text }>{ text }</Typography>
       </Box>
-      { showAvatar && messageId === LatestMessage.id  ?
+      { showAvatar && messageId === latestMessage.id  ?
 
         <Avatar
           alt={ otherUser.username }
