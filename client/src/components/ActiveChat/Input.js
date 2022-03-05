@@ -15,15 +15,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage }) => {
+const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMessage, putMessage }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
-  const LatestMessage = messages[messages.length - 1]
+  
+   const LatestMessage = messages[messages.length - 1]
+  // console.log("LatestMessage when rendering", latestMessage)
   const handleInputFocus= async()=>{
 
     //Only the recipient can update the messsage
-  try {
-    if (LatestMessage.senderId!==user.id && LatestMessage.readStatus===false){
+try {
+  if (LatestMessage.senderId!==user.id && LatestMessage.readStatus===false){
+      
+    
     const reqBody = {
       text: LatestMessage.text,
       readStatus: true,
@@ -33,16 +37,18 @@ const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMes
       sender: conversationId ? null : user,
     };
 
-    await postMessage(reqBody);
+    await putMessage(reqBody);
   
   }}catch (error) {
-      console.error(error);
+      console.error("This is handleInputFocus",error);
+
   }
     
   }
 
   const handleChange = (event) => {
     setText(event.target.value);
+
   };
 
   const handleSubmit = async (event) => {
