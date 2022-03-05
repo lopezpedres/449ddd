@@ -71,6 +71,7 @@ const Input = ({ setShowAvatar,messages,otherUser, conversationId, user, postMes
           value={text}
           name="text"
           onChange={handleChange}
+          onFocusCapture={handleInputFocus}
         />
       </FormControl>
     </form>
