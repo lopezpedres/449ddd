@@ -45,11 +45,19 @@ const SenderBubble = ({LatestMessage,setShowAvatar, showAvatar,time, text, readS
 
 
   return (
-    <Box className={classes.root}>
-      <Typography className={classes.date}>{time}</Typography>
-      <Box className={classes.bubble}>
-        <Typography className={classes.text}>{text}</Typography>
+    <Box className={ classes.root }>
+      <Typography className={ classes.date }>{ time }</Typography>
+      <Box className={ classes.bubble }>
+        <Typography className={ classes.text }>{ text }</Typography>
       </Box>
+      { showAvatar && messageId === LatestMessage.id  ?
+
+        <Avatar
+          alt={ otherUser.username }
+          src={ otherUser.photoUrl }
+          className={classes.avatar}
+        /> :
+        null }
     </Box>
   );
 };
