@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 import { Input, Header, Messages } from './index';
@@ -37,6 +37,7 @@ const ActiveChat = ({
     return obj !== {} && obj !== undefined;
   };
 
+  const [showAvatar, setShowAvatar] = useState(false)
   return (
     <Box className={classes.root}>
       {isConversation(conversation) && conversation.otherUser && (
@@ -52,12 +53,16 @@ const ActiveChat = ({
                   messages={conversation.messages}
                   otherUser={conversation.otherUser}
                   userId={user.id}
+                  showAvatar={showAvatar}
+                  setShowAvatar={setShowAvatar}
                 />
                 <Input
+                  messages= {conversation.messages}
                   otherUser={conversation.otherUser}
                   conversationId={conversation.id || null}
                   user={user}
                   postMessage={postMessage}
+                  setShowAvatar={setShowAvatar}
                 />
               </>
             )}

@@ -90,7 +90,6 @@ const Home = ({ user, logout }) => {
       console.error(error);
     }
   };
-
   const addNewConvo = useCallback(
     (recipientId, message) => {
       const updatedConversations = conversations.map((convo) => {
