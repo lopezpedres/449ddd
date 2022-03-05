@@ -208,7 +208,7 @@ const Home = ({ user, logout }) => {
       socket.off("new-message", addMessageToConversation);
       socket.off("update-message", updateMessageInConversation)
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser,updateMessageInConversation, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
