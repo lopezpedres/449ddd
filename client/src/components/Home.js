@@ -107,7 +107,7 @@ const Home = ({ user, logout }) => {
         if (convo.otherUser.id === recipientId) {
           console.log("Adding Convo")
           return {
-            ...convo, messages: [...convo.messages, message],
+            ...convo, messages: [message],
             latestMessageText: message.text,
             id: message.conversationId
           }
@@ -150,11 +150,13 @@ const Home = ({ user, logout }) => {
           messages: [message],
         };
         newConvo.latestMessageText = message.text;
-        setConversations((prev) => [newConvo, ...prev]);
+        setConversations([newConvo])
       }
+      console.log(conversations)
       //I HAVE TO PUT THIS IN A IF SO IT DOES NOT JUMP AFTER THE FIRST ONE
-        const updatedConversations = conversations.map((convo) => {
-        if (convo.id === message.conversationId) {
+   
+      if(sender === null){const updatedConversations = conversations.map((convo) => {
+      if (convo.id === message.conversationId) {
           return {
             ...convo, messages: [...convo.messages, message],
             latestMessageText: message.text
@@ -163,6 +165,7 @@ const Home = ({ user, logout }) => {
       }
       );
       setConversations(updatedConversations);
+      }
     },
     [setConversations, conversations],
   );
