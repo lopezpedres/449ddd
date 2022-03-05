@@ -84,6 +84,7 @@ const Home = ({ user, logout }) => {
 
       }else {
         addMessageToConversation(data);
+        sendMessage(data, body)
       }
 
       sendMessage(data, body);
