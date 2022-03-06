@@ -5,7 +5,6 @@
 __pycache__
 db.sqlite3
 media
-migrations
 
 # Backup files # 
 *.bak 
@@ -47,7 +46,6 @@ wheels/
 *.egg 
 *.manifest 
 *.spec 
-client/package-lock.json
 
 # Installer logs 
 pip-log.txt 
@@ -116,7 +114,6 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-launch.json
 
 */**/node_modules
 .DS_Store
