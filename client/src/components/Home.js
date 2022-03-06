@@ -62,28 +62,48 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const updateMessage = (data, body) => {
+    socket.emit("update-message", {
+      message: data.message,
+      recipientId: body.recipientId,
+      sender: data.sender,
+    });}
+
+  const putMessage = async(body)=>{
+    try{
+      const data = await saveMessage(body);
+      if(body.messageId){
+        updateMessageInConversation(data)
+      }
+      updateMessage(data,body)
+    }catch (error) {
+      console.error(error);
+    }
+
+
+  }
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
-      } else {
+      }else {
         addMessageToConversation(data);
+        
       }
-
-      sendMessage(data, body);
+      sendMessage(data, body)
     } catch (error) {
       console.error(error);
     }
   };
-
   const addNewConvo = useCallback(
     (recipientId, message) => {
       const updatedConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           return {
-            ...convo, messages: [...convo.messages, message],
+            ...convo, messages: [message],
             latestMessageText: message.text,
             id: message.conversationId
           }
@@ -95,10 +115,29 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
+  const updateMessageInConversation = useCallback(
+    (data) => {
+      const { message } = data;
+      const updatedConversations = conversations.map((convo) => {
+        if (convo.id === message.conversationId) {
+          convo.messages.splice(-1)
+          return {
+            ...convo, messages: [...convo.messages, message],
+            latestMessageText: message.text
+          }
+        } else {
+          return convo }
+      }
+      );
+      setConversations(updatedConversations);
+    },
+    [setConversations, conversations],
+  );
+
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
+      const { message, sender=null } = data;
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
@@ -106,11 +145,12 @@ const Home = ({ user, logout }) => {
           messages: [message],
         };
         newConvo.latestMessageText = message.text;
-        setConversations((prev) => [newConvo, ...prev]);
+        setConversations([newConvo])
       }
-
-      const updatedConversations = conversations.map((convo) => {
-        if (convo.id === message.conversationId) {
+      
+      if(sender === null)
+      {const updatedConversations = conversations.map((convo) => {
+      if (convo.id === message.conversationId) {
           return {
             ...convo, messages: [...convo.messages, message],
             latestMessageText: message.text
@@ -119,6 +159,7 @@ const Home = ({ user, logout }) => {
       }
       );
       setConversations(updatedConversations);
+      }
     },
     [setConversations, conversations],
   );
@@ -162,6 +203,8 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("update-message", updateMessageInConversation);
+    
 
     return () => {
       // before the component is destroyed
@@ -169,8 +212,9 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("update-message", updateMessageInConversation)
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser,updateMessageInConversation, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
@@ -224,6 +268,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          putMessage={putMessage}
         />
       </Grid>
     </>
