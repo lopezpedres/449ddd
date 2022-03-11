@@ -44,6 +44,9 @@ const Chat = ({ conversation, setActiveChat }) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
+
+      {anyUnReadMessage?.length>0 && anyUnReadMessage[0].senderId === otherUser.id &&
+        <Avatar className={classes.avatar}>{anyUnReadMessage.length}</Avatar>}
     </Box>
   );
 };
