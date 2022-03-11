@@ -58,17 +58,11 @@ class ReadMessages(APIView):
                 return HttpResponse(status=401)
 
             body = request.data
-            conversation_id = body.get("conversationId")
-            message_id = body.get("messageId")
+            messages_id = body.get("unReadMessageIds")
 
-            if conversation_id:
-                # Updating readStatus of the message
-                message= Message.objects.filter(id=message_id).first()
-                if message:
-                    message.readStatus=True
-                    message.save()
-                    message_json = message.to_dict()
-                    return JsonResponse({"message": message_json, "sender": body["sender"]})
+            # Updating readStatus of the message
+            Message.objects.filter(pk__in=messages_id).update(readStatus=True)
+            return HttpResponse(status=204)
         
         except Exception as e:
             return HttpResponse(status=500)
