@@ -21,6 +21,9 @@ const Chat = ({ conversation, setActiveChat }) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
+  const [stateMessages, dispatch] = useContext(readStatusContext)
+  let anyUnReadMessage = stateMessages.unReadMessages.filter(urm=>urm.senderId===otherUser.id&&urm)
+
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
   };
