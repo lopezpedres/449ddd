@@ -6,6 +6,7 @@ import Signup from "./Signup.js";
 import Login from "./Login.js";
 import { SnackbarError, Home } from "./components";
 import { SocketContext, socket } from "./context/socket";
+import ReadMessageContext from './context/ReadMessageContext'
 
 const Routes = (props) => {
   const [user, setUser] = useState({
@@ -89,22 +90,23 @@ const Routes = (props) => {
 
   return (
     <SocketContext.Provider value={socket}>
+      <ReadMessageContext>
       {snackBarOpen && (
         <SnackbarError
           setSnackBarOpen={setSnackBarOpen}
           errorMessage={errorMessage}
           snackBarOpen={snackBarOpen}
         />
-      )}
+        )}
       <Switch>
         <Route
           path="/login"
           render={() => <Login user={user} login={login} />}
-        />
+          />
         <Route
           path="/register"
           render={() => <Signup user={user} register={register} />}
-        />
+          />
         <Route
           exact
           path="/"
@@ -113,14 +115,15 @@ const Routes = (props) => {
               <Home user={user} logout={logout} />
             ) : (
               <Signup user={user} register={register} />
-            )
+              )
           }
-        />
+          />
         <Route
           path="/home"
           render={() => <Home user={user} logout={logout} />}
-        />
+          />
       </Switch>
+          </ReadMessageContext>
     </SocketContext.Provider>
   );
 };
