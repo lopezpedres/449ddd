@@ -26,7 +26,14 @@ const Chat = ({ conversation, setActiveChat }) => {
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
-  };
+    
+    if(anyUnReadMessage.length!==0){
+      dispatch({type:"reset", message:new Set(anyUnReadMessage)})}
+      const unReadMessageIds = anyUnReadMessage.map(irm=>irm.id)
+      await axios.patch("/api/messages/read", {"unReadMessageIds":unReadMessageIds});
+
+  }
+
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
