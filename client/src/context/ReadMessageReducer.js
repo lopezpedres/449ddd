@@ -1,18 +1,29 @@
-const initialState = { unReadMessages: [] }
+const initialState = { lastMessageRead: false, unReadMessages: [] }
 const ReadMessageReducer = (state, action) => {
     let type = action.type
-    let message = action.message
     switch (type) {
         case "new-message":
+            let message = action.message
             return {
                 ...state,
+                lastMessageRead: false,
                 unReadMessages: [...state.unReadMessages, message]
 
             }
+        case "get-message":
+            let fromDbMessage = action.message
+            return {
+                ...state,
+                lastMessageRead: false,
+                unReadMessages: [...fromDbMessage]
+
+            }
         case "reset":
-            console.log(message)
-            return {...state,unReadMessages:[state.unReadMessages.filter(urm=> !message.has(urm))]}
-            
+            let messages = action.message
+            return { ...state, lastMessageRead: false, unReadMessages: [state.unReadMessages.filter(urm => !messages.has(urm))] }
+        case "read-message":
+            return { ...state, lastMessageRead: true}
+
         default:
             return state
     }
