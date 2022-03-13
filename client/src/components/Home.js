@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { SidebarContainer } from "../components/Sidebar";
 import { ActiveChat } from "../components/ActiveChat";
 import { SocketContext } from "../context/socket";
+import  {readStatusContext}  from "../context/ReadMessageContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +25,7 @@ const Home = ({ user, logout }) => {
 
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [stateMessages, dispatch] = useContext(readStatusContext)
   const addSearchedUsers = (users) => {
     const currentUsers = {};
 
@@ -119,8 +120,9 @@ const Home = ({ user, logout }) => {
       }
       );
       setConversations(updatedConversations);
+      dispatch({type:"new-message", message})
     },
-    [setConversations, conversations],
+    [setConversations, conversations,dispatch],
   );
 
   const setActiveChat = (username) => {
@@ -192,6 +194,9 @@ const Home = ({ user, logout }) => {
         const [{ messages }] = data
         messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
+        let unReadMessages=messages.filter(m=>m.readStatus===false&&m)
+        console.log(unReadMessages)
+        dispatch({type:"get-message", message:unReadMessages})
       } catch (error) {
         console.error(error);
       }
