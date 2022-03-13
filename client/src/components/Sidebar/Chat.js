@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Box,Avatar } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
+import {socket} from '../../context/socket'
 import { readStatusContext } from '../../context/ReadMessageContext';
 import axios from 'axios';
 
@@ -38,11 +39,20 @@ const Chat = ({ conversation, setActiveChat }) => {
     
     if(anyUnReadMessage.length!==0){
       dispatch({type:"reset", message:new Set(anyUnReadMessage)})}
-      const unReadMessageIds = anyUnReadMessage.map(irm=>irm.id)
+      const unReadMessageIds = anyUnReadMessage.map(urm=>urm.id)
       await axios.patch("/api/messages/read", {"unReadMessageIds":unReadMessageIds});
 
-  }
+      socket.emit("read-messages",{type:"read-message"});
 
+  }
+  useEffect(() => {
+    socket.on("read-messages",(data)=>{dispatch({type:data.type})})
+  
+    return () => {
+      socket.off("read-messages",(data)=>{dispatch({type:data.type})})
+    }
+  }, [dispatch])
+  
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
@@ -54,7 +64,7 @@ const Chat = ({ conversation, setActiveChat }) => {
       />
       <ChatContent conversation={conversation} />
 
-      {anyUnReadMessage?.length>0 && anyUnReadMessage[0].senderId === otherUser.id &&
+      {anyUnReadMessage.length>0 && anyUnReadMessage[0]?.senderId === otherUser.id &&
         <Avatar className={classes.avatar}>{anyUnReadMessage.length}</Avatar>}
     </Box>
   );
