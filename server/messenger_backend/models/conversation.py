@@ -7,12 +7,8 @@ from .user import User
 
 class Conversation(utils.CustomModel):
 
-    user1 = models.ForeignKey(
-        User, on_delete=models.CASCADE, db_column="user1Id", related_name="+"
-    )
-    user2 = models.ForeignKey(
-        User, on_delete=models.CASCADE, db_column="user2Id", related_name="+", 
-    )
+    conversationName = models.TextField(null=True, unique = True)
+    users= models.ManyToManyField(User)
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
@@ -24,5 +20,12 @@ class Conversation(utils.CustomModel):
                 (Q(user1__id=user1Id) | Q(user1__id=user2Id)),
                 (Q(user2__id=user1Id) | Q(user2__id=user2Id)),
             )
+        except Conversation.DoesNotExist:
+            return None
+    # find conversation given a conversation's name
+    def find_conversation_by_name(conversationName):
+        # return conversation or None if it doesn't exist
+        try:
+            return Conversation.objects.filter(conversationName=conversationName).first()
         except Conversation.DoesNotExist:
             return None
