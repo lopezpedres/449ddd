@@ -211,7 +211,6 @@ const Home = ({ user, logout }) => {
         messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
         const unreadMessages = messages.filter(({readStatus}) => !readStatus)
-        console.log(unreadMessages)
         dispatch({type:"get-message", message:unreadMessages})
       } catch (error) {
         console.error(error);

@@ -37,7 +37,6 @@ const useStyles = makeStyles(() => ({
 const SenderBubble = ({messageId,lastMessageId,otherUser, time, text }) => {
   const classes = useStyles();
   const [stateMessages, dispatch] = useContext(readStatusContext)
-  console.log(stateMessages)
 
   return (
     <Box className={classes.root}>
