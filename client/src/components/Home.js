@@ -63,6 +63,20 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const updateMessage = ()=>{
+    socket.emit("read-messages",{type:"read-message"})
+  }
+
+  const patchMessage = async (otherUser)=>{
+    const unreadMessages = stateMessages.unReadMessages.filter(unreadMessage=>unreadMessage.senderId===otherUser.id&&unreadMessage)
+    dispatch({type:"reset", message:new Set(unreadMessages)})
+    const unreadMessageIds = unreadMessages.map(unreadMessage=>unreadMessage.id)
+    await axios.patch("/api/messages/read", {unreadMessageIds});
+
+    updateMessage()
+    return unreadMessages
+  }
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
@@ -164,6 +178,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("read-messages",(data)=>{dispatch({type:data.type})})
 
     return () => {
       // before the component is destroyed
@@ -171,6 +186,7 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("read-messages",(data)=>{dispatch({type:data.type})})
     };
   }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
 
@@ -194,9 +210,9 @@ const Home = ({ user, logout }) => {
         const [{ messages }] = data
         messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
-        let unReadMessages=messages.filter(m=>m.readStatus===false&&m)
-        console.log(unReadMessages)
-        dispatch({type:"get-message", message:unReadMessages})
+        const unreadMessages = messages.filter(({readStatus}) => !readStatus)
+        console.log(unreadMessages)
+        dispatch({type:"get-message", message:unreadMessages})
       } catch (error) {
         console.error(error);
       }
@@ -223,12 +239,14 @@ const Home = ({ user, logout }) => {
           clearSearchedUsers={clearSearchedUsers}
           addSearchedUsers={addSearchedUsers}
           setActiveChat={setActiveChat}
+          patchMessage={patchMessage}
         />
         <ActiveChat
           activeConversation={activeConversation}
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          patchMessage={patchMessage}
         />
       </Grid>
     </>

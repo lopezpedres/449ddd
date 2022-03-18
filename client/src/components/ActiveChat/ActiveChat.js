@@ -24,7 +24,9 @@ const ActiveChat = ({
   conversations,
   activeConversation,
   postMessage,
+  patchMessage
 }) => {
+
   const classes = useStyles();
 
   const conversation = conversations
@@ -37,8 +39,11 @@ const ActiveChat = ({
     return obj !== {} && obj !== undefined;
   };
 
+  const handlerClick=()=>{
+    conversation && patchMessage(conversation.otherUser)
+  }
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} onClick={()=>handlerClick()}>
       {isConversation(conversation) && conversation.otherUser && (
         <>
           <Header

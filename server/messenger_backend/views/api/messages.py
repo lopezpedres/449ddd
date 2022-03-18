@@ -56,9 +56,14 @@ class ReadMessages(APIView):
 
             if user.is_anonymous:
                 return HttpResponse(status=401)
+            #Check if the user belongs to the conversation    
+            conversation = Conversation(user1_id=user.id, user2_id=user.id)
+
+            if not conversation:
+                return HttpResponse(status=403)
 
             body = request.data
-            messages_id = body.get("unReadMessageIds")
+            messages_id = body.get("unreadMessageIds")
 
             # Updating readStatus of the message
             Message.objects.filter(pk__in=messages_id).update(readStatus=True)
