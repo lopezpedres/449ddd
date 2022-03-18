@@ -20,7 +20,7 @@ const ReadMessageReducer = (state, action) => {
             }
         case "reset":
             let messages = action.message
-            return { ...state, lastMessageRead: false, unReadMessages: [state.unReadMessages.filter(urm => !messages.has(urm))] }
+            return { ...state, lastMessageRead: false, unReadMessages: [...state.unReadMessages.filter(urm => !messages.has(urm))] }
         case "read-message":
             return { ...state, lastMessageRead: true}
 

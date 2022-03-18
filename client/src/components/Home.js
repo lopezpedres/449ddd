@@ -63,6 +63,20 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const updateMessage = ()=>{
+    socket.emit("read-messages",{type:"read-message"})
+  }
+
+  const patchMessage = async (otherUser)=>{
+    let anyUnReadMessage = stateMessages.unReadMessages.filter(urm=>urm.senderId===otherUser.id&&urm)
+    dispatch({type:"reset", message:new Set(anyUnReadMessage)})
+    const unReadMessageIds = anyUnReadMessage.map(urm=>urm.id)
+    await axios.patch("/api/messages/read", {"unReadMessageIds":unReadMessageIds});
+
+    updateMessage()
+    return anyUnReadMessage
+  }
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
@@ -164,6 +178,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("read-messages",(data)=>{dispatch({type:data.type})})
 
     return () => {
       // before the component is destroyed
@@ -171,6 +186,7 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("read-messages",(data)=>{dispatch({type:data.type})})
     };
   }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
 
@@ -223,12 +239,14 @@ const Home = ({ user, logout }) => {
           clearSearchedUsers={clearSearchedUsers}
           addSearchedUsers={addSearchedUsers}
           setActiveChat={setActiveChat}
+          patchMessage={patchMessage}
         />
         <ActiveChat
           activeConversation={activeConversation}
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          patchMessage={patchMessage}
         />
       </Grid>
     </>

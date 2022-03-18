@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Chat = ({ conversation, setActiveChat }) => {
+const Chat = ({ conversation, setActiveChat,patchMessage }) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
@@ -36,22 +36,8 @@ const Chat = ({ conversation, setActiveChat }) => {
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
-    
-    if(anyUnReadMessage.length!==0){
-      dispatch({type:"reset", message:new Set(anyUnReadMessage)})}
-      const unReadMessageIds = anyUnReadMessage.map(urm=>urm.id)
-      await axios.patch("/api/messages/read", {"unReadMessageIds":unReadMessageIds});
-
-      socket.emit("read-messages",{type:"read-message"});
-
+    await patchMessage(otherUser)
   }
-  useEffect(() => {
-    socket.on("read-messages",(data)=>{dispatch({type:data.type})})
-  
-    return () => {
-      socket.off("read-messages",(data)=>{dispatch({type:data.type})})
-    }
-  }, [dispatch])
   
 
   return (
@@ -62,7 +48,7 @@ const Chat = ({ conversation, setActiveChat }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent anyUnReadMessage={anyUnReadMessage} conversation={conversation} />
 
       {anyUnReadMessage.length>0 && anyUnReadMessage[0]?.senderId === otherUser.id &&
         <Avatar className={classes.avatar}>{anyUnReadMessage.length}</Avatar>}

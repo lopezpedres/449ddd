@@ -46,7 +46,7 @@ const SenderBubble = ({messageId,lastMessageId,otherUser, time, text }) => {
         <Typography className={classes.text}>{text}</Typography>
       </Box>
       <Box>
-     { messageId===lastMessageId&&stateMessages.lastMessageRead&&
+     { messageId===lastMessageId && stateMessages.lastMessageRead &&
      <Avatar
           alt={ otherUser.username }
           src={ otherUser.photoUrl }
