@@ -1,6 +1,7 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
+import { Avatar,Box, Typography } from '@material-ui/core';
+import {readStatusContext} from "../../context/ReadMessageContext"
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -25,16 +26,31 @@ const useStyles = makeStyles(() => ({
     background: '#F4F6FA',
     borderRadius: '10px 10px 0 10px',
   },
+  avatar: {
+    height: 20,
+    width: 20,
+    marginLeft: 11,
+    marginTop: 6,
+  },
 }));
 
-const SenderBubble = ({ time, text }) => {
+const SenderBubble = ({messageId,lastMessageId,otherUser, time, text }) => {
   const classes = useStyles();
+  const [stateMessages, dispatch] = useContext(readStatusContext)
 
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>
       <Box className={classes.bubble}>
         <Typography className={classes.text}>{text}</Typography>
+      </Box>
+      <Box>
+     { messageId===lastMessageId && stateMessages.lastMessageRead &&
+     <Avatar
+          alt={ otherUser.username }
+          src={ otherUser.photoUrl }
+          className={classes.avatar}
+        />}
       </Box>
     </Box>
   );

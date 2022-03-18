@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChatContent = ({ conversation }) => {
+const ChatContent = ({ conversation, unreadMessages }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
@@ -32,9 +32,17 @@ const ChatContent = ({ conversation }) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
+        {unreadMessages.length>0?
         <Typography className={classes.previewText}>
-          {latestMessageText}
+          <Box sx={{ color: 'black', fontWeight:'bold'}}>
+            {latestMessageText}
+            </Box>
         </Typography>
+        :
+        <Typography className={classes.previewText}>
+           {latestMessageText}
+        </Typography>
+        }
       </Box>
     </Box>
   );

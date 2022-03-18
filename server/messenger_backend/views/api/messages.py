@@ -48,3 +48,26 @@ class Messages(APIView):
             return JsonResponse({"message": message_json, "sender": sender})
         except Exception as e:
             return HttpResponse(status=500)
+    
+class ReadMessages(APIView):    
+    def patch(self, request):
+        try:
+            user = get_user(request)
+
+            if user.is_anonymous:
+                return HttpResponse(status=401)
+            #Check if the user belongs to the conversation    
+            conversation = Conversation(user1_id=user.id, user2_id=user.id)
+
+            if not conversation:
+                return HttpResponse(status=403)
+
+            body = request.data
+            messages_id = body.get("unreadMessageIds")
+
+            # Updating readStatus of the message
+            Message.objects.filter(pk__in=messages_id).update(readStatus=True)
+            return HttpResponse(status=204)
+        
+        except Exception as e:
+            return HttpResponse(status=500)
