@@ -22,7 +22,7 @@ class Conversation(utils.CustomModel):
             )
         except Conversation.DoesNotExist:
             return None
-    # find conversation given a conversation's name
+
     def find_conversation_by_name(conversationName):
         # return conversation or None if it doesn't exist
         try:
