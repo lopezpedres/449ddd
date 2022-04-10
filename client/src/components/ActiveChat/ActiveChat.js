@@ -39,8 +39,18 @@ const ActiveChat = ({
     return obj !== {} && obj !== undefined;
   };
 
+  const notSender = (conversation)=>{
+    const latestMessage = conversation.messages[conversation.messages.length-1]
+
+    return latestMessage.senderId!==user.id
+  }
+
   const handlerClick=()=>{
-    conversation && patchMessage(conversation.otherUser)
+    console.log(conversation)
+    return conversation && notSender(conversation)? 
+    patchMessage(conversation.otherUser)
+    : null
+    
   }
   return (
     <Box className={classes.root} onClick={()=>handlerClick()}>

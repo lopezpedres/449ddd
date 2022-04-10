@@ -58,7 +58,7 @@ class ReadMessages(APIView):
                 return HttpResponse(status=401)
 
             body = request.data
-            messages_id = body.get("unReadMessageIds")
+            messages_id = body.get("unreadMessageIds")
 
             # Updating readStatus of the message
             Message.objects.filter(pk__in=messages_id).update(readStatus=True)

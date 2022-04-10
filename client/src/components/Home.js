@@ -68,13 +68,13 @@ const Home = ({ user, logout }) => {
   }
 
   const patchMessage = async (otherUser)=>{
-    let anyUnReadMessage = stateMessages.unReadMessages.filter(urm=>urm.senderId===otherUser.id&&urm)
-    dispatch({type:"reset", message:new Set(anyUnReadMessage)})
-    const unReadMessageIds = anyUnReadMessage.map(urm=>urm.id)
-    await axios.patch("/api/messages/read", {"unReadMessageIds":unReadMessageIds});
+    const unreadMessages = stateMessages.unReadMessages.filter(unreadMessage=>unreadMessage.senderId===otherUser.id&&unreadMessage)
+    dispatch({type:"reset", message:new Set(unreadMessages)})
+    const unreadMessageIds = unreadMessages.map(unreadMessage=>unreadMessage.id)
+    await axios.patch("/api/messages/read", {unreadMessageIds});
 
     updateMessage()
-    return anyUnReadMessage
+    return unreadMessages
   }
 
   const postMessage = async (body) => {
@@ -210,9 +210,8 @@ const Home = ({ user, logout }) => {
         const [{ messages }] = data
         messages.sort((a, b) => a["createdAt"] > b["createdAt"] ? 1 : -1)
         setConversations(data);
-        let unReadMessages=messages.filter(m=>m.readStatus===false&&m)
-        console.log(unReadMessages)
-        dispatch({type:"get-message", message:unReadMessages})
+        const unreadMessages = messages.filter(({readStatus}) => !readStatus)
+        dispatch({type:"get-message", message:unreadMessages})
       } catch (error) {
         console.error(error);
       }
